@@ -11,6 +11,10 @@ export default class BrowserReporter {
     this.typeColorMap = {
       success: '#2ecc71' // Green
     }
+    this.tagColorMap = {}
+    this.updateTagColorMap = (tagColorMap) => {
+      this.tagColorMap = Object.assign({}, this.tagColorMap, tagColorMap)
+    }
   }
 
   log (logObj) {
@@ -23,9 +27,6 @@ export default class BrowserReporter {
     // Type
     const type = logObj.type !== 'log' ? logObj.type : ''
 
-    // Tag
-    const tag = logObj.tag ? logObj.tag : ''
-
     // Styles
     const color = this.typeColorMap[logObj.type] || this.levelColorMap[logObj.level] || this.defaultColor
     const style = `
@@ -34,15 +35,36 @@ export default class BrowserReporter {
       color: white;
       font-weight: bold;
       padding: 2px 0.5em;
+      margin-right: 0.5em;
     `
 
-    const badge = `%c${[tag, type].filter(Boolean).join(':')}`
+    const badge = `%c${type}`
+
+    let tags = ''
+    const tagsStyles = []
+
+    if (logObj.tags) {
+      for (const tag of logObj.tags) {
+        const color = this.tagColorMap[tag] || this.defaultColor
+        const style = `
+        background: ${color};
+        border-radius: 0.5em;
+        color: white;
+        font-weight: bold;
+        padding: 2px 0.5em;
+        margin-right: 0.5em;
+      `
+        tagsStyles.push(style)
+        tags += `%c${tag}`
+      }
+    }
 
     // Log to the console
     if (typeof logObj.args[0] === 'string') {
       consoleLogFn(
-        `${badge}%c ${logObj.args[0]}`,
+        `${badge}${tags}%c ${logObj.args[0]}`,
         style,
+        ...tagsStyles,
         // Empty string as style resets to default console style
         '',
         ...logObj.args.slice(1)

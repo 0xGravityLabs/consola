@@ -78,7 +78,7 @@ class Consola {
 
   withTag (tag) {
     return this.withDefaults({
-      tag: this._defaults.tag ? (this._defaults.tag + ':' + tag) : tag
+      tags: this._defaults.tags ? [tag, ...this._defaults.tags] : [tag]
     })
   }
 
@@ -244,7 +244,6 @@ class Consola {
 
     // Normalize type and tag to lowercase
     logObj.type = typeof logObj.type === 'string' ? logObj.type.toLowerCase() : ''
-    logObj.tag = typeof logObj.tag === 'string' ? logObj.tag.toLowerCase() : ''
 
     // Resolve log
     /**
@@ -279,13 +278,13 @@ class Consola {
     this._lastLogTime = logObj.date
     if (diffTime < this._throttle) {
       try {
-        const serializedLog = JSON.stringify([logObj.type, logObj.tag, logObj.args])
+        const serializedLog = JSON.stringify([logObj.type, logObj.tags, logObj.args])
         const isSameLog = this._lastLogSerialized === serializedLog
         this._lastLogSerialized = serializedLog
         if (isSameLog) {
           this._lastLogCount++
           if (this._lastLogCount > this._throttleMin) {
-          // Auto-resolve when throttle is timed out
+            // Auto-resolve when throttle is timed out
             this._throttleTimeout = setTimeout(resolveLog, this._throttle)
             return // SPAM!
           }
