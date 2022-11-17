@@ -78,7 +78,7 @@ class Consola {
 
   withTag (tag) {
     return this.withDefaults({
-      tags: this._defaults.tags ? [tag, ...this._defaults.tags] : [tag]
+      tags: this._defaults.tags ? [...this._defaults.tags, tag] : [tag]
     })
   }
 

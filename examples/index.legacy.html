@@ -11,8 +11,8 @@
       consola.level = 5
       const browserReporter = new consola.BrowserReporter()
       browserReporter.updateTagColorMap({
-        customTag: 'blue',
-        test: '#123456'
+        AnyWeb: '#037bff',
+        User:"red"
       })
       consola.setReporters(browserReporter)
       consola.wrapAll()
@@ -21,7 +21,7 @@
           consola[type]('Open developer tools to see the magic!')
       }
 
-      consola.withTag('customTag').withTag("test").withScope("scope")
+      consola.withTag('AnyWeb').withTag("User")
         .success('Im from custom world!')
 
       consola.error(new Error('Whoo Haha'))
