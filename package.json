@@ -1,5 +1,5 @@
 {
-  "name": "consola",
+  "name": "@littleor/consola",
   "version": "3.0.2",
   "description": "Elegant Console Logger for Node.js and Browser",
   "license": "MIT",
