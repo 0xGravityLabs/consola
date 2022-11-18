@@ -11,10 +11,8 @@ export default class BrowserReporter {
     this.typeColorMap = {
       success: '#2ecc71' // Green
     }
-    this.tagColorMap = {}
-    this.updateTagColorMap = (tagColorMap) => {
-      this.tagColorMap = Object.assign({}, this.tagColorMap, tagColorMap)
-    }
+    this.tagColorMap = this.options.tagColorMap || {}
+    this.allowedTagMap = this.options.allowedTagMap || {}
   }
 
   log (logObj) {
@@ -45,6 +43,9 @@ export default class BrowserReporter {
 
     if (logObj.tags) {
       for (const tag of logObj.tags) {
+        if (this.allowedTagMap[tag] !== undefined && this.allowedTagMap[tag] === false) {
+          return
+        }
         const color = this.tagColorMap[tag] || this.defaultColor
         const style = `
         background: ${color};
@@ -59,10 +60,26 @@ export default class BrowserReporter {
       }
     }
 
+    let project = ''
+    let projectStyle = ''
+    if (logObj.project) {
+      project = `%c${logObj.project}`
+      const color = this.tagColorMap[logObj.project] || this.defaultColor
+      projectStyle = `
+        background: ${color};
+        border-radius: 0.5em;
+        color: white;
+        font-weight: bold;
+        padding: 2px 0.5em;
+        margin-right: 0.5em;
+      `
+    }
+
     // Log to the console
     if (typeof logObj.args[0] === 'string') {
       consoleLogFn(
-        `${badge}${tags}%c ${logObj.args[0]}`,
+        `${project}${badge}${tags}%c ${logObj.args[0]}`,
+        projectStyle,
         style,
         ...tagsStyles,
         // Empty string as style resets to default console style
@@ -70,7 +87,7 @@ export default class BrowserReporter {
         ...logObj.args.slice(1)
       )
     } else {
-      consoleLogFn(badge, style, ...logObj.args)
+      consoleLogFn(`${project}${badge}${tags}`, projectStyle, style, ...tagsStyles, ...logObj.args)
     }
   }
 }

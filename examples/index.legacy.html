@@ -7,18 +7,24 @@
     Open developer tools to see the magic!
     <script src="../dist/consola.browser.js"></script>
     <script>
-
-      consola.level = 5
-      const browserReporter = new consola.BrowserReporter()
-      browserReporter.updateTagColorMap({
-        Cosmo: '#7d03ff',
-        User:"red"
+      const browserReporter = new consola.BrowserReporter({
+        tagColorMap:{
+          Cosmo: '#7d03ff',
+          User: "red"
+        },
+        allowedTagMap:{
+          User: true,
+        }
       })
-      consola.setReporters(browserReporter)
+      consola = consola.withDefaults({
+        project: "Cosmo",
+      })
+      consola.setReporters([browserReporter])
+      consola.level = 5
       consola.wrapAll()
 
       for (let type of Object.keys(consola._types).sort()) {
-          consola[type]('Open developer tools to see the magic!')
+        consola[type]('Open developer tools to see the magic!')
       }
 
       consola.withTag('Cosmo').withTag("User")
